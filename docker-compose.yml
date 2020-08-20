@@ -1,31 +1,17 @@
 version: '3.8'
 services:
 
-  airflow-webserver:
-    container_name: airflow-webserver
-    build:
-      context: ./airflow
-      dockerfile: Dockerfile
-    ports:
-      - 8080:8080
-    depends_on:
-      - airflow-mysql
-    entrypoint:
-      - sh
-      - docker-entrypoint.sh
-    volumes:
-      - ./airflow:/root/airflow
-    restart: always
-
   airflow-mysql:
     container_name: airflow-mysql
-    image: mysql:8.0.20
+    image: mysql:5.7 # use this version to prevent "caching_sha2_password" issue
     environment:
       MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: airflow
     ports:
       - 3306:3306
     volumes:
       - ./data:/var/lib/mysql
+      - ./database:/docker-entrypoint-initdb.d/:ro
     cap_add:
       - sys_nice
     restart: always
@@ -38,6 +24,26 @@ services:
       - 8025:8025
     volumes:
       - ./mail:/maildir
+    restart: always
+
+  airflow-webserver:
+    container_name: airflow-webserver
+    build:
+      context: ./airflow
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    depends_on:
+      - airflow-mysql
+      - mailhog
+    links:
+      - airflow-mysql
+      - mailhog
+    entrypoint:
+      - sh
+      - docker-entrypoint.sh
+    volumes:
+      - ./airflow:/root/airflow
     restart: always
 
 volumes: 
