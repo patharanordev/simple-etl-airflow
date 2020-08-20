@@ -1,0 +1,50 @@
+version: '3.8'
+services:
+
+  airflow-webserver:
+    container_name: airflow-webserver
+    build:
+      context: ./airflow
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    depends_on:
+      - airflow-mysql
+    entrypoint:
+      - sh
+      - docker-entrypoint.sh
+    volumes:
+      - ./airflow:/root/airflow
+    restart: always
+
+  airflow-mysql:
+    container_name: airflow-mysql
+    image: mysql:8.0.20
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - 3306:3306
+    volumes:
+      - ./data:/var/lib/mysql
+    cap_add:
+      - sys_nice
+    restart: always
+    
+  mailhog:
+    container_name: mailhog
+    image: mailhog/mailhog
+    ports:
+      - 1025:1025
+      - 8025:8025
+    volumes:
+      - ./mail:/maildir
+    restart: always
+
+volumes: 
+  src: 
+  data:
+  mail:
+
+networks:
+  default:
+    driver: bridge
