@@ -95,7 +95,9 @@ with DAG('covid19_data_pipeline',
 
 For the example, I'm preparing to fetch daily COVID-19 data by start executing on 2020-07-01.
 
-Now we ready to declare our tasks.
+> <br>note:
+> *Now we ready to declare our tasks.*
+> <br>
 
 #### Task#1 (`t1`) : Fetch the data by using SimpleHttpOperator
 
@@ -109,9 +111,9 @@ Navigator or Toolbar in Airflow's UI > Admin > Connections
 
 In this case, I set the connection ID to `https_covid19_api` :
 
- - Conn Id : https_covid19_api
- - Conn Type : HTTP
- - Host : https://covid19.th-stat.com
+ - **Conn Id** : https_covid19_api
+ - **Conn Type** : HTTP
+ - **Host** : https://covid19.th-stat.com
 
 In your DAG should look like this :
 
@@ -236,17 +238,17 @@ def save_data_into_db(**kwargs):
 
 **note**: `mysql_conn_id` same as `http_conn_id`, you need to create MySQL's connection first.
 
- - Conn Id : covid19_db
- - Conn Type : MySQL
- - Host : airflow-mysql
- - Schema : airflow
- - Login : root
- - Password : root
- - Port : 3306
+ - **Conn Id** : covid19_db
+ - **Conn Type** : MySQL
+ - **Host** : airflow-mysql (this host name refer to container name in docker-compose.yml, you can change it to your mysql instance instead)
+ - **Schema** : airflow
+ - **Login** : root
+ - **Password** : root
+ - **Port** : 3306
 
 then
 
-Let's create task#2 :
+Let's create **task#2** :
 
 ```python
 
