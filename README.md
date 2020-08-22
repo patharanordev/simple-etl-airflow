@@ -10,8 +10,18 @@ This project shows you how-to-config or set up data pipeline by using `Airflow` 
  - [x] MySQL
  - [x] MailHog
  - [x] Docker daemon
+ - [ ] [DBeaver](https://dbeaver.io/) (optional)
 
 ## Preparing Environments
+
+### Dockerize
+
+```bash
+# Run docker-compose with specific process
+$ sh run.sh
+```
+
+### Undockerize
 
 For undockerize `Airflow` service, you MUST copy pipeline script from `./src/covid19-data-pipeline.py` to your `Airflow` directory by default is `~/airflow/dags`
 
@@ -39,6 +49,19 @@ mkdir -p data
 # Start mail server (using Docker)
 sh start-mailhog.sh
 ```
+
+### Database
+
+After start Dockerize services or Undockerize services, please don't forget initial your database :
+
+```sql
+CREATE DATABASE airflow;
+USE airflow;
+GRANT ALL PRIVILEGES ON airflow.* TO 'root'@'%' IDENTIFIED BY 'root';
+GRANT ALL PRIVILEGES ON airflow.* TO 'root'@'localhost' IDENTIFIED BY 'root';
+```
+
+**note** : for Dockerize services, intial file is in `./database/init.sql`.
 
 ## Setup Pipeline
 
@@ -72,7 +95,9 @@ with DAG('covid19_data_pipeline',
 
 For the example, I'm preparing to fetch daily COVID-19 data by start executing on 2020-07-01.
 
-Now we ready to declare our tasks.
+> <br>note:
+> *Now we ready to declare our tasks.*
+> <br>
 
 #### Task#1 (`t1`) : Fetch the data by using SimpleHttpOperator
 
@@ -84,7 +109,13 @@ Navigator or Toolbar in Airflow's UI > Admin > Connections
 
 ![how-to-set-http_conn_id](assets/how-to-set-http_conn_id.png)
 
-In this case, I set it to `https_covid19_api`. In your DAG should look like this :
+In this case, I set the connection ID to `https_covid19_api` :
+
+ - **Conn Id** : https_covid19_api
+ - **Conn Type** : HTTP
+ - **Host** : https://covid19.th-stat.com
+
+In your DAG should look like this :
 
 ```python
 from airflow.operators.http_operator import SimpleHttpOperator
@@ -207,9 +238,17 @@ def save_data_into_db(**kwargs):
 
 **note**: `mysql_conn_id` same as `http_conn_id`, you need to create MySQL's connection first.
 
+ - **Conn Id** : covid19_db
+ - **Conn Type** : MySQL
+ - **Host** : airflow-mysql (this host name refer to container name in docker-compose.yml, you can change it to your mysql instance instead)
+ - **Schema** : airflow
+ - **Login** : root
+ - **Password** : root
+ - **Port** : 3306
+
 then
 
-Let's create task#2 :
+Let's create **task#2** :
 
 ```python
 
@@ -315,6 +354,37 @@ see the data in database :
 received an email that has content like this :
 
 ![got-email](assets/ss-got-email.png)
+
+## Issues
+
+#### *MySQL 8+ : Public Key Retrieval is not allowed*
+
+To change the settings on Dbeaver:
+
+1) Right click your connection, choose "Edit Connection"
+
+2) On the "Connection settings" screen (main screen) click on "Edit Driver Settings"
+
+![mysql8plus1](./assets/issue-mysql8plus-img1.png)
+
+3) Click on "Connection properties"
+
+4) Right click the "user properties" area and choose "Add new property"
+
+5) Add two properties: "useSSL" and "allowPublicKeyRetrieval"
+
+6) Set their values to  "false" and "true" by double clicking on the "value" column
+
+![mysql8plus2](./assets/issue-mysql8plus-img2.png)
+
+Save and re-test the connection. Hopefully it should work!
+
+#### *Authentication plugin 'caching_sha2_password' cannot be loaded*
+
+Full error message :
+> *Authentication plugin 'caching_sha2_password' cannot be loaded: /usr/lib/x86_64-linux-gnu/mariadb18/plugin/caching_sha2_password.so: cannot open shared object file: No such file or directory*
+
+It occurred on MySQL8+, I'm found many method to solve it but it's not work for me on Airflow container. So I changed MySQL container image from `8` to `5.7`.
 
 ## License
 
