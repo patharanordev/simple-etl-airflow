@@ -10,19 +10,15 @@ This project shows you how-to-config or set up data pipeline by using `Airflow` 
  - [x] MySQL
  - [x] MailHog
  - [x] Docker daemon
+ - [ ] [DBeaver](https://dbeaver.io/) (optional)
 
 ## Preparing Environments
 
 ### Dockerize
 
 ```bash
-# Stop the old one
-$ docker-compose down -v
-# Start the new one
-$ docker-compose up --build
-
-# Or start with detach
-$ docker-compose up --build -d
+# Run docker-compose with specific process
+$ sh run.sh
 ```
 
 ### Undockerize
