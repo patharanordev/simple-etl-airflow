@@ -55,10 +55,10 @@ sh start-mailhog.sh
 After start Dockerize services or Undockerize services, please don't forget initial your database :
 
 ```sql
-CREATE DATABASE airflow;
-USE airflow;
-GRANT ALL PRIVILEGES ON airflow.* TO 'root'@'%' IDENTIFIED BY 'root';
-GRANT ALL PRIVILEGES ON airflow.* TO 'root'@'localhost' IDENTIFIED BY 'root';
+CREATE DATABASE covid19;
+USE covid19;
+GRANT ALL PRIVILEGES ON covid19.* TO 'root'@'%' IDENTIFIED BY 'root';
+GRANT ALL PRIVILEGES ON covid19.* TO 'root'@'localhost' IDENTIFIED BY 'root';
 ```
 
 **note** : for Dockerize services, intial file is in `./database/init.sql`.
