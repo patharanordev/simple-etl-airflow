@@ -241,7 +241,7 @@ def save_data_into_db(**kwargs):
  - **Conn Id** : covid19_db
  - **Conn Type** : MySQL
  - **Host** : airflow-mysql (this host name refer to container name in docker-compose.yml, you can change it to your mysql instance instead)
- - **Schema** : airflow
+ - **Schema** : covid19
  - **Login** : root
  - **Password** : root
  - **Port** : 3306
