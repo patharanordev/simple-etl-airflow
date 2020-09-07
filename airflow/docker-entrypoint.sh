@@ -7,5 +7,7 @@ sed -i 's/smtp_starttls = True/smtp_starttls = False/g' $AIRFLOW_HOME/airflow.cf
 sed -i 's/smtp_port = 25/smtp_port = 1025/g' $AIRFLOW_HOME/airflow.cfg && \
 sed -i 's/smtp_mail_from = airflow@example.com/smtp_mail_from = airflow@mailhog.local/g' $AIRFLOW_HOME/airflow.cfg && \
 sed -i 's/@0.0.0.0:3306\/airflow/@airflow-mysql:3306\/airflow/g' $AIRFLOW_HOME/airflow.cfg && \
+sed -i 's/default_ui_timezone = UTC/default_ui_timezone = Asia\/Bangkok/g' $AIRFLOW_HOME/airflow.cfg && \
+sed -i 's/default_timezone = utc/default_timezone = Asia\/Bangkok/g' $AIRFLOW_HOME/airflow.cfg && \
 screen -dmS "webserver" sh -c 'airflow webserver -p 8080' && \
 airflow scheduler

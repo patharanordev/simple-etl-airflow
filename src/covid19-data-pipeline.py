@@ -9,36 +9,6 @@ from airflow.operators.python_operator import PythonOperator
 from airflow.operators.http_operator import SimpleHttpOperator
 from airflow.utils.dates import days_ago
 
-# def get_covid19_report_today():
-
-#     import requests
-#     import logging
-#     import sys, traceback
-
-#     LOGGER = logging.getLogger("airflow.task")
-#     LOGGER.info("Fetching data...")
-
-#     url = 'https://covid19.th-stat.com/api/open/today'
-#     LOGGER.info("URL : {}".format(url))
-
-#     try:
-
-#         LOGGER.info("Request to the URL...")
-#         response = requests.get(url)
-#         LOGGER.info("Transform to JSON...")
-#         data = response.json()
-#         LOGGER.info("Writing to file...")
-#         # LOGGER.info('Responding from API : {}'.format(json.dumps(data)))
-#         with open('data.json', 'w') as f:
-#             LOGGER.debug('Write temp file to : {}'.format(f.name))
-#             json.dump(data, f)
-
-#     except:
-#         LOGGER.error('Cannot fetch the data!!!')
-
-#     return data
-
-
 def save_data_into_db(**kwargs):
 
     import logging
@@ -93,7 +63,7 @@ def save_data_into_db(**kwargs):
 
 
 default_args = {
-    'owner': 'dataength',
+    'owner': 'patharanor',
     'start_date': datetime(2020, 7, 1),
     'email': ['test@mailhog.local'],
     'provide_context': True  # to support task instance for XComms with kwargs['ti']
@@ -102,12 +72,7 @@ with DAG('covid19_data_pipeline',
          schedule_interval='@daily',
          default_args=default_args,
          description='A simple data pipeline for COVID-19 report',
-         catchup=False) as dag:
-
-    # t1 = PythonOperator(
-    #     task_id='get_covid19_report_today',
-    #     python_callable=get_covid19_report_today
-    # )
+         catchup=True) as dag:
 
     t1 = SimpleHttpOperator(
         task_id='get_covid19_report_today',
