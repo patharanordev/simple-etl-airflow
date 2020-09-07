@@ -88,7 +88,7 @@ with DAG('covid19_data_pipeline',
   schedule_interval='@daily',
   default_args=default_args,
   description='A simple data pipeline for COVID-19 report',
-  catchup=False) as dag:
+  catchup=True) as dag:
 
   # ...
 ```
